@@ -4,7 +4,6 @@ import { Text } from "@chakra-ui/react"
 
 export default function Page(){
   return (
-    <Text> Teste</Text>
+    <h1> Teste</h1>
   )
 }
-export const dynamic = "force-dynamic"
