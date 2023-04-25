@@ -48,10 +48,9 @@ export const CardDestaqueProps: FC <CardDestaqueProps> =
                 Ver Opções
                 </Button>
                 <Image src={src} alt="Imagem do card" maxH="150px"/>
-                <CardLoja path="/" nome='Emici Donald' nota={4.5} categoria="Lanche" distacia="1.2KM" tempo="30-40 min" taxaEntrega={0}></CardLoja>
                 </Flex>
                 </Flex>
         </Flex>
     </Link>
-    )
+    );
 }

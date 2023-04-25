@@ -4,6 +4,7 @@ import { Button, Flex, FormControl, Heading, Icon, Input, InputGroup, InputLeftA
 import {GoSearch} from 'react-icons/go'
 import { useState } from "react";
 import { CardDestaqueProps } from "@/components/CardDestaque";
+import { CardLoja } from "@/components/CardLoja";
 
 export default function Page() {
   const [busca, setBusca] = useState('');
@@ -30,8 +31,14 @@ export default function Page() {
       <CardDestaqueProps src='/restaurant.avif' path='/' titulo='Restaurante' color='red'/>
       <CardDestaqueProps src='/market.avif' path='/' titulo='Compras' color='green'/>
     </Flex>
-    <Flex as="section" mt="10" gap={4} wrap="wrap">
-      L
+    <Flex as="section"  maxW="90vw" marginLeft="5vw"  direction={'column'} >
+      <Heading fontSize="1.25rem">Lojas</Heading>
+      <Flex gap={8} mt={2} wrap="wrap" align="center"  >
+    <CardLoja path="/" nome='Emici Donald' nota={4.5} categoria="Lanche" distancia="1.2KM" tempo="30-40 min" taxaEntrega={38.90}></CardLoja>
+    <CardLoja path="/" nome='Emici Donald' nota={4.5} categoria="Lanche" distancia="1.2KM" tempo="30-40 min" taxaEntrega={0}></CardLoja>
+    <CardLoja path="/" nome='Emici Donald' nota={4.5} categoria="Lanche" distancia="1.2KM" tempo="30-40 min" taxaEntrega={8.00}></CardLoja>
+    <CardLoja path="/" nome='Emici Donald' nota={4.5} categoria="Lanche" distancia="1.2KM" tempo="30-40 min" taxaEntrega={0}></CardLoja>
+      </Flex>
     </Flex>
   </Flex>
   )
