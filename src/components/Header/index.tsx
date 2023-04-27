@@ -32,8 +32,8 @@ export const Header: FC<HeaderProps> = ({isOpen, onToggle}) => {
    
     <Menu isOpen={isOpen} />
     <Flex gap='4'display={{base: isOpen ? 'flex' : 'none', md: 'flex'}}>
-      <Button as={Link} href="/"variant="link" colorScheme='red'>Crie sua conta</Button>
-      <Button as={Link} href="/" colorScheme='red'>Entrar</Button>
+      <Button as={Link} href="/cadastro"variant="link" colorScheme='red'>Crie sua conta</Button>
+      <Button as={Link} href="/login" colorScheme='red'>Entrar</Button>
     </Flex>
   </Flex>
   );
