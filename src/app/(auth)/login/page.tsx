@@ -2,9 +2,33 @@
 
 import { Input } from "@/components/Input"
 import { Button, Flex,  Heading, Link, Text, } from "@chakra-ui/react"
+import { useForm } from "react-hook-form"
+import * as yup from 'yup'
+import { yupResolver } from '@hookform/resolvers/yup'
 
+
+const validacaoLogin = yup.object().shape({
+    email: yup
+    .string()
+    .email('Você precisa informar um e-mail válido')
+    .required('Você precisa informar um e-mail'),
+    senha: yup
+    .string()
+    .required('Infome sua senha')
+    .min(8, ' Sua senha precisa ter ao menos 8 caracteres.'),
+})
+type LoginDados = {
+    email: string
+    senha: string
+}
 
 export default function Login () {
+    const {register, handleSubmit, formState:{ isLoading, errors},
+        } = useForm<LoginDados>({resolver:yupResolver(validacaoLogin),
+    });
+    const onSubmit = (data: LoginDados) => {
+        console.log(data)
+    }
     return(
                     
         <Flex 
@@ -24,19 +48,24 @@ export default function Login () {
             direction="column"
             gap={4}
             pt={2}
+            onSubmit={handleSubmit(onSubmit)}
         >
         <Input 
             id="email" 
             type="email" 
             label="Email" 
             placeholder="email@email.com"
+            {...register('email')}
+            error={errors.email}
         />
         <Input 
             id="senha" 
             type="password" 
             label="Senha" 
+            {...register('senha')}
+            error={errors.senha}
         />
-        <Button colorScheme="red">Entrar</Button>
+        <Button type="submit" colorScheme="red" isLoading={isLoading}>Entrar</Button>
         </Flex>
         <Flex as="footer" borderTop="1px solid rgba(0,0,0,0.2)" mt={4} pt={4}>
             <Text>

@@ -1,17 +1,19 @@
-import { FormControl, FormLabel, Input as ChakraInput, InputProps } from "@chakra-ui/react";
+import { FormControl, FormLabel, Input as ChakraInput, InputProps, FormErrorMessage } from "@chakra-ui/react";
 import {  forwardRef } from "react";
+import { Field, FieldError } from "react-hook-form";
 
 interface InputBasePros extends InputProps{
     id: string
     type: string
     label: string
+    error?: FieldError
 
 }
 
-const InputBase = ({id, type, label, ...resto}: InputBasePros, ref: any) =>{
+const InputBase = ({id, type, label,error, ...resto}: InputBasePros, ref: any) =>{
 
     return(
-        <FormControl>
+        <FormControl isInvalid={!!error}>
                     <FormLabel htmlFor={id}>{label}</FormLabel>
                     <ChakraInput id={id} 
                     type={type} 
@@ -19,6 +21,7 @@ const InputBase = ({id, type, label, ...resto}: InputBasePros, ref: any) =>{
                     ref={ref}
                     variant="flushed"
                     focusBorderColor="red.500"/>
+                    {!!error && <FormErrorMessage>{error.message}</FormErrorMessage>}
                 </FormControl>
     )
 }
