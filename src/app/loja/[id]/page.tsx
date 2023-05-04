@@ -1,9 +1,12 @@
 'use client'
 import { CardProdutos } from "@/components/CardProduto/Index"
 import { CardProdutoHorizontal } from "@/components/CardProdutoHorizontal"
+import { ModalProduto } from "@/components/ModalProduto"
 import { StarRating } from "@/components/StarRating"
-import { Button, Card, CardBody, Divider, Flex, Heading, Icon, Image, Stack, Text } from "@chakra-ui/react"
-import { use } from "react"
+import { formataMoeda } from "@/helpers/formataMoeda"
+import { getProdutos } from "@/services/produtosService"
+import { Button, Card, CardBody, Divider, Flex, Heading, Icon, Image, Stack, Text, useDisclosure } from "@chakra-ui/react"
+import { use, useState } from "react"
 import { AiFillDollarCircle } from "react-icons/ai"
 
 type LojaProps = {
@@ -14,10 +17,10 @@ type LojaProps = {
 
 
 export default  function Loja({params: {id}}: LojaProps ) {
-   const dadosLoja: any = use(
-    new Promise((resolve) =>{
-    setTimeout(() => 
-        resolve({
+    const {isOpen, onClose, onOpen} = useDisclosure()
+    const [addId, setAddId] = useState('')
+   const dadosLoja = {
+    
          nome: 'Emici Donald', 
          nota: 4.5 ,
          categoria: "Lanche" ,
@@ -26,17 +29,14 @@ export default  function Loja({params: {id}}: LojaProps ) {
          taxaEntrega: 38.90,
          pedidoMinimo: 75.5,
 
-    }),
-    3 * 1000,
-    )
-
-   }), 
-   )
-
-   const moneyFormatter = new Intl.NumberFormat('pt-br', {
-    style: 'currency',
-    currency: 'BRL',
-   })
+    }
+    const handleOpenModal = (id: string) => {
+        setAddId(id)
+        onOpen()
+    }
+        
+    const produtos =getProdutos()
+  
 
    return (
    <Flex 
@@ -73,7 +73,7 @@ export default  function Loja({params: {id}}: LojaProps ) {
                 gap="3px"> 
                 
                 <Icon as={AiFillDollarCircle}/>
-                    Pedido Mínimo{moneyFormatter.format(dadosLoja.pedidoMinimo)}
+                    Pedido Mínimo{formataMoeda(dadosLoja.pedidoMinimo)}
                 </Text>
             </Flex>
        </Flex>
@@ -82,22 +82,9 @@ export default  function Loja({params: {id}}: LojaProps ) {
         <Heading fontSize="1rem">Destaques</Heading>
         <Divider/>
         <Flex wrap="wrap" gap={6}>
-        <CardProdutos descricao="Lorem ipsum dolor sit amet consectetur adipisicing elit. Soluta tempore dicta voluptatibus, eveniet velit, veritatis voluptatem consequatur aperiam nesciunt eos commodi incidunt accusantium? Cupiditate modi maxime pariatur rerum minima eligendi?" 
-                        image="https://placehold.co/398x157" 
-                        preco={20.85} 
-                        nome="Grande Méqui"/>
-        <CardProdutos descricao="Lorem ipsum dolor sit amet consectetur adipisicing elit. Soluta tempore dicta voluptatibus, eveniet velit, veritatis voluptatem consequatur aperiam nesciunt eos commodi incidunt accusantium? Cupiditate modi maxime pariatur rerum minima eligendi?" 
-                        image="https://placehold.co/398x157" 
-                        preco={15.28} 
-                        nome="Quadra"/>
-        <CardProdutos descricao="Lorem ipsum dolor sit amet consectetur adipisicing elit. Soluta tempore dicta voluptatibus, eveniet velit, veritatis voluptatem consequatur aperiam nesciunt eos commodi incidunt accusantium? Cupiditate modi maxime pariatur rerum minima eligendi" 
-                        image="https://placehold.co/398x157" 
-                        preco={28.75} 
-                        nome="Emici Lanchinho Feliz"/>
-        <CardProdutos descricao="Lorem ipsum dolor sit amet consectetur adipisicing elit. Soluta tempore dicta voluptatibus, eveniet velit, veritatis voluptatem consequatur aperiam nesciunt eos commodi incidunt accusantium? Cupiditate modi maxime pariatur rerum minima eligendi?" 
-                        image="https://placehold.co/398x157" 
-                        preco={15.90} 
-                        nome="Emici Galinha"/>
+        {produtos.map((produtos) =>(
+            <CardProdutos handleOpenModal={handleOpenModal} produto={produtos} key={produtos.id}/>
+        ))}
             
         </Flex>
         </Flex>
@@ -114,26 +101,12 @@ export default  function Loja({params: {id}}: LojaProps ) {
              mt={2}
              p={1}
              >
-                <CardProdutoHorizontal
-                descricao="Lorem ipsum dolor sit amet consectetur adipisicing elit. Soluta tempore dicta voluptatibus, eveniet velit, veritatis voluptatem consequatur aperiam nesciunt eos commodi incidunt accusantium? Cupiditate modi maxime pariatur rerum minima eligendi?" 
-                image="https://placehold.co/398x157" 
-                preco={15.90} 
-                nome="Emici Galinha"
-                />
-                 <CardProdutoHorizontal
-                descricao="Lorem ipsum dolor sit amet consectetur adipisicing elit. Soluta tempore dicta voluptatibus, eveniet velit, veritatis voluptatem consequatur aperiam nesciunt eos commodi incidunt accusantium? Cupiditate modi maxime pariatur rerum minima eligendi?" 
-                image="https://placehold.co/398x157" 
-                preco={15.90} 
-                nome="Emici Galinha"
-                />   
-                <CardProdutoHorizontal
-                descricao="Lorem ipsum dolor sit amet consectetur adipisicing elit. Soluta tempore dicta voluptatibus, eveniet velit, veritatis voluptatem consequatur aperiam nesciunt eos commodi incidunt accusantium? Cupiditate modi maxime pariatur rerum minima eligendi?" 
-                image="https://placehold.co/398x157" 
-                preco={15.90} 
-                nome="Emici Galinha"
-                />   
+              {produtos.map((produtos) =>(
+            <CardProdutoHorizontal handleOpenModal={handleOpenModal} produto={produtos} key={produtos.id}/>
+        ))} 
             </Flex>
         </Flex>
+        <ModalProduto isOpen={isOpen} onClose={onClose} id={addId}/>
    </Flex>
    )
 }

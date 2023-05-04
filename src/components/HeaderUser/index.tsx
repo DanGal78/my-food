@@ -1,7 +1,8 @@
 import { Link } from "@chakra-ui/next-js";
 import { Flex, HStack, Heading, Button, Text, Menu, MenuButton, IconButton, MenuList, MenuItem} from "@chakra-ui/react";
 import { FC } from "react";
-import { FaCog, FaDoorOpen, FaShoppingBasket, FaUserAlt, FaUserCog } from "react-icons/fa";
+import { FaCog, FaDoorOpen, FaUserAlt, FaUserCog } from "react-icons/fa";
+import { CheckoutButton } from "../CheckoutButton";
 
 
 export const HeaderUser: FC = () => {
@@ -31,16 +32,7 @@ export const HeaderUser: FC = () => {
                         </MenuItem>
                     </MenuList>
                 </Menu>
-                <Button 
-                as={Link}
-                href="/"
-                aria-label="Carrinho de compras do usuário"
-                leftIcon={<FaShoppingBasket/>}>
-                    <Flex direction="column">
-                        <Text>R$ 0,00</Text>
-                        <Text>0 Itens</Text>
-                    </Flex>
-                </Button>
+                <CheckoutButton/>
             </HStack>
         </Flex>
     )
