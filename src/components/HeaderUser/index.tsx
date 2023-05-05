@@ -7,9 +7,11 @@ import { CheckoutButton } from "../CheckoutButton";
 
 export const HeaderUser: FC = () => {
     return(
-        <Flex position="fixed" 
+        <Flex 
+        position="fixed" 
         justify="space-between"
-         p={4} zIndex="9999"
+         p={4}
+        zIndex={999}
          w="100%" 
          bg="gray.50"
          align="center"
