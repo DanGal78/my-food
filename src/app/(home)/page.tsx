@@ -5,9 +5,11 @@ import {GoSearch} from 'react-icons/go'
 import { useState } from "react";
 import { CardDestaqueProps } from "@/components/CardDestaque";
 import { CardLoja } from "@/components/CardLoja";
+import { listarLojas } from "@/services/lojaService";
 
 export default function Page() {
   const [busca, setBusca] = useState('');
+  const data = listarLojas()
   return (
   <Flex direction="column" align="center" grow={1}>
     <Flex as="hgroup" direction="column" align="center">
@@ -34,10 +36,10 @@ export default function Page() {
     <Flex as="section"  maxW="90vw" marginLeft="5vw"  direction={'column'} >
       <Heading fontSize="1.25rem">Lojas</Heading>
       <Flex gap={8} mt={2} wrap="wrap" align="center"  >
-    <CardLoja path="/" nome='Emici Donald' nota={4.5} categoria="Lanche" distancia="1.2KM" tempo="30-40 min" taxaEntrega={38.90}></CardLoja>
-    <CardLoja path="/" nome='Emici Donald' nota={4.5} categoria="Lanche" distancia="1.2KM" tempo="30-40 min" taxaEntrega={0}></CardLoja>
-    <CardLoja path="/" nome='Emici Donald' nota={4.5} categoria="Lanche" distancia="1.2KM" tempo="30-40 min" taxaEntrega={8.00}></CardLoja>
-    <CardLoja path="/" nome='Emici Donald' nota={4.5} categoria="Lanche" distancia="1.2KM" tempo="30-40 min" taxaEntrega={0}></CardLoja>
+        {data.map((loja) => (
+        <CardLoja key={loja.id} loja={loja} path={`/loja/${loja.id}`}/>
+        ))}
+    
       </Flex>
     </Flex>
   </Flex>

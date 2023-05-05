@@ -3,26 +3,16 @@ import { Box, Flex, Heading, Image, Text, Icon, textDecoration} from "@chakra-ui
 import { FC } from "react"
 import {FaStar} from 'react-icons/fa'
 import { StarRating } from "../StarRating"
+import { Loja } from "@/services/lojaService"
 
 interface CardLojaProps{
+    loja: Loja
     path: string
-    nome: string
-    nota: number
-    tempo: string
-    taxaEntrega: number
-    categoria: string
-    distancia: string
-    logo?: string
 }
 
 export const CardLoja: FC<CardLojaProps> = ({
     path,
-    nome,
-    nota,
-    tempo,
-    taxaEntrega,
-    categoria,
-    distancia
+    loja:    {nome, nota, tempo, taxaEntrega,categoria, distancia, imageLogo}
 }) => {
 
     const moneyFormatter = new Intl.NumberFormat('pt-br',{
@@ -45,7 +35,7 @@ export const CardLoja: FC<CardLojaProps> = ({
       transition="all 0.2s"
       >
         <Flex gap={4} align="center" justify="space-between">
-            <Image src="https://placehold.co/100"
+            <Image src={imageLogo}
              alt={`Logotipo da loja ${nome}`}  
              borderRadius="full"       
              />
