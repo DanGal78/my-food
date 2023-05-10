@@ -1,10 +1,14 @@
 'use client'
 
 import { Input } from "@/components/Input"
-import { Button, Flex,  Heading, Link, Text, } from "@chakra-ui/react"
+import { Button, Flex,  Heading, IconButton, Link, Text, useDisclosure, } from "@chakra-ui/react"
 import { useForm } from "react-hook-form"
 import * as yup from 'yup'
 import { yupResolver } from '@hookform/resolvers/yup'
+import { useAuth } from "@/contexts/AuthContext"
+import { redirect } from "next/navigation"
+import { FaEye, FaEyeSlash } from "react-icons/fa"
+
 
 
 const validacaoLogin = yup.object().shape({
@@ -25,9 +29,15 @@ type LoginDados = {
 export default function Login () {
     const {register, handleSubmit, formState:{ isLoading, errors},
         } = useForm<LoginDados>({resolver:yupResolver(validacaoLogin),
-    });
-    const onSubmit = (data: LoginDados) => {
-        console.log(data)
+    })
+
+    const {login} =useAuth()
+    const {isOpen: isShowing, onToggle} = useDisclosure()
+    
+
+    const onSubmit =  async (data: LoginDados) => {
+       await login(data)
+       window.location.href ='/'
     }
     return(
                     
@@ -58,13 +68,21 @@ export default function Login () {
             {...register('email')}
             error={errors.email}
         />
+        <Flex align="center">
         <Input 
             id="senha" 
-            type="password" 
+            type={isShowing ? 'text': "password" }
             label="Senha" 
             {...register('senha')}
             error={errors.senha}
         />
+        <IconButton 
+        mt="auto" 
+        variant="unstyled" 
+        aria-label="Tracar a visibilidade de senha" 
+        onClick={onToggle} 
+        icon={isShowing ? <FaEye/> : <FaEyeSlash/>}/>
+        </Flex>
         <Button type="submit" colorScheme="red" isLoading={isLoading}>Entrar</Button>
         </Flex>
         <Flex as="footer" borderTop="1px solid rgba(0,0,0,0.2)" mt={4} pt={4}>

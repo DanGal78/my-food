@@ -3,6 +3,7 @@ import { Flex, HStack, Heading, Button, Text, Menu, MenuButton, IconButton, Menu
 import { FC } from "react";
 import { FaCog, FaDoorOpen, FaUserAlt, FaUserCog } from "react-icons/fa";
 import { CheckoutButton } from "../CheckoutButton";
+import { UserMenu } from "../UserMenu";
 
 
 export const HeaderUser: FC = () => {
@@ -19,21 +20,7 @@ export const HeaderUser: FC = () => {
          >
             <Heading fontSize="1rem">MyFood</Heading>
             <HStack>
-                <Menu>
-                    <MenuButton as={IconButton} aria-label="Informação do Usuário" 
-                    icon={<FaUserAlt/>}/>
-                    <MenuList>
-                        <MenuItem as={Link} href="/" icon={<FaUserCog/>}>
-                            Perfil
-                        </MenuItem>
-                        <MenuItem as={Link} href="/" icon={<FaCog/>}>
-                            Configurações
-                        </MenuItem>
-                        <MenuItem as={Link} href="/" color="red.500" icon={<FaDoorOpen/>}>
-                            Sair
-                        </MenuItem>
-                    </MenuList>
-                </Menu>
+                <UserMenu/>
                 <CheckoutButton/>
             </HStack>
         </Flex>
