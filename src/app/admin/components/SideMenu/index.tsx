@@ -13,7 +13,7 @@ export const SideMenu: FC = () => {
     {
         icon: FaHome,
         title: 'Início',
-        path: '/'
+        path: '/admin'
     },
     {
         icon: FaStore,
