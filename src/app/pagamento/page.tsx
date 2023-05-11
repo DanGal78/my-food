@@ -84,7 +84,7 @@ export default function PagamentoPage() {
                         >
                             <Text>{produto.nome}</Text>
                             <Text>{produto.quantidade}</Text>
-                            <Text>formataMoeda{produto.quantidade * produto.preco}</Text>
+                            <Text>{produto.quantidade * produto.preco}</Text>
 
                         </Flex>
                     ))}
