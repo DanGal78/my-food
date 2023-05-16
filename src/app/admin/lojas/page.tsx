@@ -1,19 +1,55 @@
 'use client'
 import { Input } from "@/components/Input";
 import { listarLojas } from "@/services/lojaService";
-import { Button, Flex, Heading, IconButton, Modal, ModalBody, ModalCloseButton, ModalContent, ModalHeader, ModalOverlay, Table, Tbody, Td, Th, Thead, Tr, useDisclosure } from "@chakra-ui/react";
+import { Button, Flex, FormControl, FormErrorMessage, FormLabel, Heading, IconButton, Modal, ModalBody, ModalCloseButton, ModalContent, ModalHeader, ModalOverlay, Table, Tbody, Td, Th, Thead, Tr, useDisclosure } from "@chakra-ui/react";
 import { FaPencilAlt, FaTrash } from "react-icons/fa";
+import * as yup from 'yup'
+import { yupResolver } from "@hookform/resolvers/yup";
+import { useForm } from "react-hook-form";
+import { Image } from "@chakra-ui/react";
 
+import { AdminHeader } from "../components/AdminHeader";
+
+const validacaoLoja = yup.object().shape({
+    nome: yup.string().required('Informe o nome da loja.'),
+    categoria: yup.string().required('Informe o categoria da loja.'),
+    tempo: yup.string().required('Informe o tempo de preparo.'),
+    entrega: yup.number() .typeError('Infome uma taxa de entrega').required('Informe a taxa de entrega.'),
+    logo: yup.mixed().test('type','Envie uma imagem mo formato JPG ou PNG',(value: any) =>{
+        if(value.length > 0) {
+            return value[0].type ==='image/jpeg' || value[0].type === 'image/png'
+        }
+        return false
+    }).required('Informe o logo da loja.'),
+    cover: yup.mixed().test('type','Envie uma imagem mo formato JPG ou PNG',(value: any) =>{
+        if(value.length > 0) {
+            return value[0].type ==='image/jpeg' || value[0].type === 'image/png'
+        }
+        return false
+    }) .required('Informe a capa da loja.')
+})
+type FormularioLoja = {
+    nome: string
+    categoria: string
+    tempo: string
+    entrega: string
+    logo: any
+    cover: any
+}
 export default function LojaIndex() {
+    const { register, handleSubmit, formState:{errors}, watch } = useForm<FormularioLoja>({
+        resolver: yupResolver(validacaoLoja),
+    })
     const {isOpen, onOpen, onClose} =useDisclosure()
     const dadosLoja = listarLojas()
+
+    const salvarLoja = (dados: FormularioLoja) => {
+        console.log(dados)
+    }
     
     return (
         <Flex direction="column" grow={1} gap={4}>
-            <Flex align="center" justify="space-between" px={2}>
-            <Heading fontSize="lg">Lojas</Heading>
-            <Button colorScheme="green" onClick={onOpen}>Nova loja</Button>
-            </Flex>
+           <AdminHeader title='Lojas' buttonLabel="Nova Loja" onClick={onOpen}/>
      
         <Flex>
             <Table variant="striped">
@@ -56,14 +92,51 @@ export default function LojaIndex() {
                     <ModalHeader>Nova Loja</ModalHeader>
                     <ModalCloseButton/>
                     <ModalBody>
-                        <Flex as="form" p={4} direction="column">
-                            <Input label="Nome" type="text" id="nome"/>
-                            <Input label="Categoria" type="text" id="categoria"/>
-                            <Input label="Tempo de preparo" type="text" id="tempo"/>
-                            <Input label="Taxa de Entrega" type="number" id="entrega"/>
-                            <Input label="Logo" type="file" id="logo"/>
-                            <Input label="Capa" type="file" id="cover"/>
-                            <Button colorScheme="green">Salvar</Button>
+                        <Flex as="form" p={4} direction="column"gap={1} onSubmit={handleSubmit(salvarLoja)}>
+                            <Input label="Nome" type="text" id="nome" error={errors.nome}{...register('nome')} />
+                            <Input label="Categoria" type="text" id="categoria" error={errors.categoria}{...register('categoria')}/>
+                            <Input label="Tempo de preparo" type="text" id="tempo" error={errors.tempo} {...register('tempo')}/>
+                            <Input label="Taxa de Entrega" type="number" id="entrega" error={errors.entrega} {...register('entrega')}/>
+                            <Input label="Logo" type="file" id="logo"  display={'nome'}  {...register('logo')}/>
+                            <FormControl isInvalid={!!errors.logo}>
+                            <FormLabel htmlFor="logo">
+                                <Image 
+                                alt="Imagem do logo"
+                                src={
+                                    typeof watch('logo') ==='undefined'
+                                    && typeof watch('logo') === 'object' 
+                                ? URL.createObjectURL(watch('logo')[0])
+                                : 'https://placehold.it/100x100'                                
+                            }
+                            w="100px"
+                            h="100px"
+                            objectFit="cover"
+                            cursor={'pointer'}
+                            />
+                            </FormLabel>
+                            <FormErrorMessage>{errors.logo?.message as string}</FormErrorMessage>
+                            </FormControl>
+                            <Input label="Capa" type="file" id="cover"  display={'nome'}  {...register('cover')}/>
+                            <FormControl isInvalid={!!errors.cover}>
+                            <FormLabel htmlFor="cover">
+                                <Image 
+                                alt="Imagem da capa"
+                                src={
+                                    typeof watch('cover') ==='undefined'
+                                     && typeof watch('cover') === 'object' 
+                                ? URL.createObjectURL(watch('cover')[0])
+                                : 'https://placehold.co/1200x250'                                
+                            }
+                            w="100%"
+                            h="250px"
+                            objectFit="cover"
+                            cursor={'pointer'}
+                            />
+                            </FormLabel>
+                            <FormErrorMessage>{errors.cover?.message as string}</FormErrorMessage>
+                            </FormControl>
+                            
+                            <Button type="submit" colorScheme="green" >Salvar</Button>
                         </Flex>
                     </ModalBody>
                 </ModalContent>

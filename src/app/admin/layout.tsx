@@ -40,7 +40,7 @@ export default function AdminLayout({children}: AdminLayoutProps) {
             >
                 <SideMenu/>
             </GridItem>
-            <GridItem  gridArea="conteudo">{children}</GridItem>
+            <GridItem  gridArea="conteudo" p={4}>{children}</GridItem>
             <GridItem  gridArea="footer">
                 <Footer/>
             </GridItem>
