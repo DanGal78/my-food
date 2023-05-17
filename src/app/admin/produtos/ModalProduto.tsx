@@ -1,12 +1,13 @@
 import { Input } from "@/components/Input"
 import { Loja } from "@/services/lojaService"
 import { Produto, createProduto, updateProdutos} from "@/services/produtosService"
-import { Textarea, Button, Flex, FormControl, FormErrorMessage, FormLabel, Modal, ModalBody, ModalCloseButton, ModalContent, ModalHeader, ModalOverlay, Select } from "@chakra-ui/react"
+import { Textarea, Button, Flex, FormControl, FormErrorMessage, FormLabel, Modal, ModalBody, ModalCloseButton, ModalContent, ModalHeader, ModalOverlay, Select, Image } from "@chakra-ui/react"
 import { FC } from "react"
 import {useForm} from 'react-hook-form'
 import * as yup from 'yup'
 import { yupResolver } from "@hookform/resolvers/yup"
 import { formataMoeda } from "@/helpers/formataMoeda"
+import { watch } from "fs"
 
 
 
@@ -49,6 +50,7 @@ interface ProdutoForm {
     preco: number | string
     desconto: number  | string
     loja_id: string | number;
+    imagens: FileList
 }
 export const ModalProduto : FC<ModalProdutoProps> = ({
     isOpen,
@@ -57,7 +59,7 @@ export const ModalProduto : FC<ModalProdutoProps> = ({
     produto
 }) => {
     const { register, handleSubmit, formState:{errors, isSubmitting}, 
-    setValue} = useForm<ProdutoForm>({
+    setValue, watch} = useForm<ProdutoForm>({
         resolver: yupResolver(validacaoProduto),
     })
     const submitProduto = (data: ProdutoForm) =>{
@@ -128,6 +130,31 @@ export const ModalProduto : FC<ModalProdutoProps> = ({
                             )
                          }}
                         />
+                        <FormControl>
+                            <FormLabel htmlFor="imagens">Imagens do Produto</FormLabel>
+                            <input type="file" 
+                            id="imagens" 
+                            {...register('imagens')}
+                            multiple
+                            />
+                            <Flex gap={2} wrap="wrap" mt={2}>
+                                {[...new Array(
+                                    typeof watch('imagens')!== 'undefined'
+                                ? watch('imagens').length
+                                : 0,
+                            ),
+                                ].map((value, index) => {
+                                    return (
+                                        <Image
+                                        maxW="100px"
+                                        alt="Preview de imagagem"
+                                        key={index}
+                                        src={URL.createObjectURL(watch('imagens').item(index))}
+                                        />
+                                    ) 
+                                    })}
+                             </Flex>
+                        </FormControl>
                     <Button colorScheme="green" type="submit" mt={2} isDisabled={isSubmitting}>
                         Salvar
                     </Button>
