@@ -14,7 +14,9 @@ const InputBase = ({id, type, label,error, ...resto}: InputBasePros, ref: any) =
 
     return(
         <FormControl isInvalid={!!error}>
-                    <FormLabel htmlFor={id}>{label}</FormLabel>
+                    <FormLabel htmlFor={id}mb={0}>
+                        {label}
+                    </FormLabel>
                     <ChakraInput id={id} 
                     type={type} 
                     {...resto} 
