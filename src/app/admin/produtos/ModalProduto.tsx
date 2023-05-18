@@ -149,7 +149,7 @@ export const ModalProduto : FC<ModalProdutoProps> = ({
                                         maxW="100px"
                                         alt="Preview de imagagem"
                                         key={index}
-                                        src={URL.createObjectURL(watch('imagens').item(index))}
+                                        src={URL.createObjectURL(watch('imagens').item(index) as File,)}
                                         />
                                     ) 
                                     })}

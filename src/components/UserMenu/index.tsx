@@ -13,7 +13,7 @@ export const UserMenu: FC = () => {
                     <MenuButton as={IconButton} aria-label="Informação do Usuário" 
                     icon={<FaUserAlt/>}/>
                     <MenuList>
-                        <MenuItem as={Link} href="/" icon={<FaUsersCog/>}>
+                        <MenuItem as={Link} href="/perfil" icon={<FaUsersCog/>}>
                             Perfil
                         </MenuItem>
                         <MenuItem as={Link} href="/" icon={<FaCog/>}>
