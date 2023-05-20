@@ -1,5 +1,7 @@
-import { Usuario } from "@/services/ususarioService";
-
+import { apiClient } from "@/config/axios";
+import { notify } from "@/config/toast";
+import { Usuario, createLogin } from "@/services/ususarioService";
+import decode from 'jwt-decode'
 import {  FC, ReactNode, createContext, useContext, useEffect, useState } from "react";
 
 type LoginData ={
@@ -7,11 +9,20 @@ type LoginData ={
     senha: string
 }
 
+interface TokenClaims {
+    iss: number | string
+    nome: string
+    email: string
+    permissions: string[]
+    exp: number
+}
+
 interface AuthContextProps{
     isLogged: boolean
     login: (loginData: LoginData) => Promise<boolean>
     logout: () => void
     userData: Usuario
+    hasPermission:(permission: string) => boolean
 }
 
 const AuthContext = createContext<AuthContextProps>({} as AuthContextProps)
@@ -33,35 +44,55 @@ export const AuthProvider: FC<{ children: ReactNode }> = ({ children }) => {
     },[isLogged])
 
 
-    const login = (loginData: LoginData) => {
-        return new Promise<boolean>((resolve) => {
-            setTimeout(() => {
-                resolve(true)
-                setIsLogged(true)
-                setUserData({
-                    nome: 'Dummy Jhoe',
-                    email: 'dummy@email.com',
-                    id: '1',
-                    endereco: {
-                        bairro: 'Dummy Bairro',
-                        cep: '01001000',
-                        cidade: 'Dummy Cidade',
-                        complemento: 'Dummy complemento',
-                        logradouro: 'Dummy rua',
-                        numero:'122',
-                        estado: 'Sp',
+    const login = async (loginData: LoginData) => {
+        try{
+        const {data} = await createLogin<LoginData>(loginData);
+        if(data.token !== null){
+            apiClient.defaults.headers.common.Authorization = `Bearer  ${data.token}`;
+             window.localStorage.setItem('access_token', data.token);
+            
 
-                    },
-                })
-            }, 2000) 
-        })
+            const tokenClaims = decode<TokenClaims>(data.token);
+
+            setUserData({
+                id: tokenClaims.iss as string,
+                nome: tokenClaims.nome,
+                email: tokenClaims.email,
+                permissions: tokenClaims.permissions,                
+            })
+
+           setIsLogged(true);
+            notify(data.message, 'success');
+            return true;
+        }
+
+        return false
+        } catch (e: any) {
+           if (e.response) {
+            setIsLogged(true);
+            setUserData({} as Usuario)
+            notify(e.response.data.message, 'error');
+            return false;
+           }
+           notify('Ocrreu um erro inesperado', 'error');
+           return false;
+        }
+    }
+
+    const hasPermission = (permission: string) => {
+        if (!userData.permissions) {
+            return false;
+        }
+        return userData.permissions.includes(permission)
     }
 
 const logout = () => {
     setIsLogged(false)
+    setUserData({} as Usuario)
+        window.localStorage.removeItem('access_token')
 
 }
 return(
-    <AuthContext.Provider value= {{isLogged, login, logout, userData}}>{ children }</AuthContext.Provider>
+    <AuthContext.Provider value= {{hasPermission, isLogged, login, logout, userData}}>{ children }</AuthContext.Provider>
 )
 }

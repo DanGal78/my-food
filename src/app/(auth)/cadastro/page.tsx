@@ -1,10 +1,12 @@
 'use client'
 import { Input } from "@/components/Input";
-import { Button, Flex, Heading, Text } from "@chakra-ui/react";
+import { Button, Flex, Heading, Text, useToast } from "@chakra-ui/react";
 import { Link } from "@chakra-ui/next-js";
 import * as yup from "yup"
 import { yupResolver } from '@hookform/resolvers/yup'
 import { useForm } from "react-hook-form"
+import { createUser } from "@/services/ususarioService";
+import { notify } from '@/config/toast'
 
 const validacaoCadastro = yup.object().shape({
     nome: yup
@@ -47,11 +49,30 @@ export default function Cadastro(){
     const {register, handleSubmit, formState:{ isSubmitting, errors},
         } = useForm<FormularioCadastro>({resolver:yupResolver(validacaoCadastro),
     });
+    
     const cadastraUsuario = async (dados: FormularioCadastro) => {
-        await new Promise((resolve)=>{
-            setTimeout(() => resolve(dados), 3 * 1000)
-        })
+        try {
+            const resposta = await createUser(dados)
+           notify(resposta.data.message, 'success')
+           
+            setTimeout(() => {
+                            window.location.href = '/login'
+                            }, 9000)
+
+        } catch (e: any){
+           if (typeof e.message !== 'undefined'){
+            const {
+                data: { message },
+                }  = e.response
+                notify(message, 'error')
+                return
+            }
+                notify('Um erro inesperado aconteceu', 'error')            
+        }        
     }
+
+        
+   
 
     return(
         <Flex 

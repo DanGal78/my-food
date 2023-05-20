@@ -1,3 +1,6 @@
+import { Menu } from './../components/Menu/index';
+import { apiClient } from '@/config/axios';
+
 
 
 export interface Endereco {
@@ -15,6 +18,13 @@ export interface Usuario {
     nome: string
     email: string
     endereco?: Endereco
+    permissions?: string[]
+}
+interface CreateUserForm {    
+    nome: string
+    email: string
+    senha: string
+    confirmaSenha: string
 }
 
 export const obterUsuarios = (): Usuario[] => {
@@ -51,4 +61,21 @@ export const obterUsuarios = (): Usuario[] => {
 }
 export const obterUsuario = (id: string): Usuario | undefined => {
     return obterUsuarios().find((usuario) => usuario.id === id)
+}
+interface CreateUserResponse {
+    id: string
+    message: string
+}
+
+export const createUser = (userForm : CreateUserForm) => {
+    return apiClient.post<CreateUserResponse>('/register', userForm,)
+}
+
+interface LoginResponse {
+    message: string
+    token: string
+}
+
+export const createLogin = <T> (userLogin: T ) =>{
+    return apiClient.post<LoginResponse>('/login', userLogin)
 }

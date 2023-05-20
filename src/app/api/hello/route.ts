@@ -1,3 +1,7 @@
-export async function GET(request: Request) {
-  return new Response('Hello, Next.js!')
+import { NextApiRequest } from 'next'
+
+import { NextResponse } from 'next/server'
+
+export async function GET(req: NextApiRequest) {
+  return NextResponse.json({ message: "Hello World, I'm Live" })
 }
