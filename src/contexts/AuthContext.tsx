@@ -45,7 +45,7 @@ export const AuthProvider: FC<{ children: ReactNode }> = ({ children }) => {
     
     useEffect(() =>{
         window.localStorage.setItem('access_token', token || '')
-        apiClient.defaults.headers.common.Authorization = `Bearer  ${token}`
+        apiClient.defaults.headers.common.Authorization = `Bearer ${token}`
         if (!token) return
         const { exp } = decode<TokenClaims>(token || '')
         const expTimeTamp = exp * 1000

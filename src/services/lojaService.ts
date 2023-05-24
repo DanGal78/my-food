@@ -1,9 +1,11 @@
+import { apiClient } from '@/config/axios';
+import { FormErrorMessage } from '@chakra-ui/react';
 export interface Loja {
-    id:string
+    id?:string
     nome: string
     nota: number
     categoria: string
-    distancia: string
+    distancia?: string
     tempo: string
     taxaEntrega: number
     pedidoMinimo: number
@@ -11,61 +13,20 @@ export interface Loja {
     imageCover: string
 }
 
+
 export const listarLojas = () => {
-    return [
-        {
-        id: '1',
-        nome: 'Emici Donaldis',
-        nota: 4.5,
-        categoria: 'Lanches',
-        distancia: '1.5 km',
-        tempo: '30 min',
-        taxaEntrega: 5,
-        pedidoMinimo: 10,
-        imageLogo: 'https://picsum.photos/100/100',
-        imageCover: 'https://picsum.photos/1200/250',
-        },
-        {
-        id: '2',
-        nome: 'Burguer Queen',
-        nota: 4.5,
-        categoria: 'Lanches',
-        distancia: '1.5 km',
-        tempo: '30 min',
-        taxaEntrega: 5,
-        pedidoMinimo: 10,
-        imageLogo: 'https://picsum.photos/100/100',
-        imageCover: 'https://picsum.photos/1200/250',
-        },
-        {
-        id: '3',
-        nome: 'Pizzaria do Mario',
-        nota: 4.5,
-        categoria: 'Pizzaria',
-        distancia: '1.5 km',
-        tempo: '30 min',
-        taxaEntrega: 5,
-        pedidoMinimo: 10,
-        imageLogo: 'https://picsum.photos/100/100',
-        imageCover: 'https://picsum.photos/1200/250',
-        },
-        {
-        id: '4',
-        nome: 'Sorveteria do Zé',
-        nota: 4.5,
-        categoria: 'Sorvetes',
-        distancia: '1.5 km',
-        tempo: '30 min',
-        taxaEntrega: 5,
-        pedidoMinimo: 10,
-        imageLogo: 'https://picsum.photos/100/100',
-        imageCover: 'https://picsum.photos/1200/250',
-        },
-        ]
+    return apiClient.get<Loja[]>('/loja')
         
         
 }
 
 export const obterLoja = (id: string) => {
-    return listarLojas().find((loja) => loja.id === id)
+    return apiClient.get<Loja>(`/loja/${id}`)
+}
+interface CadastraLojaDTO {
+    message: string
+}
+
+export const cadastrarLoja = (lojaData: Loja) => {
+    return apiClient.post<CadastraLojaDTO>('/loja',lojaData)
 }

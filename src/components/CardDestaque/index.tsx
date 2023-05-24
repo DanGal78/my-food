@@ -12,7 +12,7 @@ interface CardDestaqueProps {
     
 }
 
-export const CardDestaqueProps: FC <CardDestaqueProps> = 
+export const CardDestaque: FC <CardDestaqueProps> = 
 ({titulo, path, src,color,}) =>{
     const [currentColor, setCurrentColor] = useState('')
     useEffect(() => {
@@ -22,6 +22,7 @@ export const CardDestaqueProps: FC <CardDestaqueProps> =
             setCurrentColor('green.500')
         }
     },[color])
+    console.log('redenrizado')
     return(
     <Link href={path} _hover={{textDecoration: 'none',transform: 'scale(1.02)'}}
     transition="all 0.2s"

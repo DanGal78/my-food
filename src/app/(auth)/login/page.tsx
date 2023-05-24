@@ -6,7 +6,6 @@ import { useForm } from "react-hook-form"
 import * as yup from 'yup'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { useAuth } from "@/contexts/AuthContext"
-import { redirect } from "next/navigation"
 import { FaEye, FaEyeSlash } from "react-icons/fa"
 
 
@@ -40,7 +39,7 @@ export default function Login () {
        if(isLogged){
            setTimeout(() => {
             window.location.href = '/'
-           },9000           )
+           }, 2000)
        }
       
     }

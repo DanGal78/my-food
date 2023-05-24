@@ -57,7 +57,7 @@ export default function Cadastro(){
            
             setTimeout(() => {
                             window.location.href = '/login'
-                            }, 9000)
+                            }, 2000)
 
         } catch (e: any){
            if (typeof e.message !== 'undefined'){

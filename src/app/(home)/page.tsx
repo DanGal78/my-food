@@ -1,15 +1,20 @@
 'use client'
 
-import { Button, Flex, FormControl, Heading, Icon, Input, InputGroup, InputLeftAddon } from "@chakra-ui/react"
+import { Button, Flex, FormControl, Heading, Icon, Input, InputGroup, InputLeftAddon, Spinner, Text } from "@chakra-ui/react"
 import {GoSearch} from 'react-icons/go'
 import { useState } from "react";
-import { CardDestaqueProps } from "@/components/CardDestaque";
+import { useQuery } from "react-query";
+import { CardDestaque } from "@/components/CardDestaque";
 import { CardLoja } from "@/components/CardLoja";
 import { listarLojas } from "@/services/lojaService";
 
 export default function Page() {
   const [busca, setBusca] = useState('');
-  const data = listarLojas()
+  const {data, isLoading, isError} = useQuery({
+    queryKey: ['lojas', 'home'],
+    queryFn: listarLojas,
+  })
+  console.log('redenrizado home')
   return (
   <Flex direction="column" align="center" grow={1}>
     <Flex as="hgroup" direction="column" align="center">
@@ -30,15 +35,19 @@ export default function Page() {
       </FormControl>
     </Flex>
     <Flex as="section" mt={10} gap={4}>
-      <CardDestaqueProps src='/restaurant.avif' path='/' titulo='Restaurante' color='red'/>
-      <CardDestaqueProps src='/market.avif' path='/' titulo='Compras' color='green'/>
+    <CardDestaque src='/restaurant.avif' path='/' titulo='Restaurante' color='red'/>
+      <CardDestaque src='/market.avif' path='/' titulo='Compras' color='green'/>
     </Flex>
     <Flex as="section"  maxW="90vw" marginLeft="5vw"  direction={'column'} >
       <Heading fontSize="1.25rem">Lojas</Heading>
       <Flex gap={8} mt={2} wrap="wrap" align="center"  >
-        {data.map((loja) => (
-        <CardLoja key={loja.id} loja={loja} path={`/loja/${loja.id}`}/>
-        ))}
+        {isLoading ? <Spinner size="md"/> 
+        : isError ? <Text>Ocorreu um erro</Text> 
+        : (data?.data?.map(loja => (
+        <CardLoja key={loja.id} loja={loja} path={`/loja/${loja.id}`}/> 
+        ))
+        )}
+    
     
       </Flex>
     </Flex>
