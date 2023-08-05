@@ -43,7 +43,7 @@ export default function Page() {
       <Flex gap={8} mt={2} wrap="wrap" align="center"  >
         {isLoading ? <Spinner size="md"/> 
         : isError ? <Text>Ocorreu um erro</Text> 
-        : (data?.data?.map(loja => (
+        : (data?.data?.data?.map(loja => (
         <CardLoja key={loja.id} loja={loja} path={`/loja/${loja.id}`}/> 
         ))
         )}

@@ -6,7 +6,7 @@ import { FC } from "react"
 import { FaCog, FaDoorOpen, FaUserAlt, FaUsersCog } from "react-icons/fa"
 
 export const UserMenu: FC = () => {
-    const { logout } =useAuth()
+    const { logout, hasPermission } =useAuth()
 
     return(
         <Menu>
@@ -19,6 +19,11 @@ export const UserMenu: FC = () => {
                         <MenuItem as={Link} href="/" icon={<FaCog/>}>
                             Configurações
                         </MenuItem>
+                        {hasPermission('Administrador') && (
+                            <MenuItem as={Link} href="/admin" icon={<FaCog/>}>
+                                Painel de Adm
+                            </MenuItem>
+                        )}
                         <MenuItem 
                         as={Button} 
                         onClick={() => {

@@ -1,6 +1,6 @@
 'use client'
 import { Input } from "@/components/Input";
-import { Loja, cadastrarLoja, listarLojas } from "@/services/lojaService";
+import { Loja, apagarLoja, atualizaLoja, cadastrarLoja, listarLojas } from "@/services/lojaService";
 import { Button, Flex, FormControl, FormErrorMessage, FormLabel, Heading, IconButton,
      Modal, ModalBody, ModalCloseButton, ModalContent, ModalHeader, ModalOverlay,
       Spinner, Table, Tbody, Td, Text, Th, Thead, Tr, useDisclosure } from "@chakra-ui/react";
@@ -14,55 +14,12 @@ import { getBase64 } from "@/helpers/getBase64";
 import { formataMoeda } from "@/helpers/formataMoeda";
 import { notify } from "@/config/toast";
 import { useQuery, useQueryClient} from 'react-query'
+import { useState } from "react";
+import { ConfirmDelete } from "@/components/ConfirmDelete";
+import { FormLojas } from "./FormLoja";
 
-const validacaoLoja = yup.object().shape({
-    nome: yup.string().required('Informe o nome da loja.'),
-    categoria: yup.string().required('Informe o categoria da loja.'),
-    tempo: yup.string().required('Informe o tempo de preparo.'),
-    
-    logo: yup.mixed().test('type','Envie uma imagem mo formato JPG ou PNG',(value: any) =>{
-        if(value.length > 0) {
-            return value[0].type ==='image/jpeg' || value[0].type === 'image/png'
-        }
-        return false
-    }).required('Informe o logo da loja.'),
-    cover: yup.mixed().test('type','Envie uma imagem mo formato JPG ou PNG',(value: any) =>{
-        if(value.length > 0) {
-            return value[0].type ==='image/jpeg' || value[0].type === 'image/png'
-        }
-        return false
-    }) .required('Informe a capa da loja.'),
-    pedidoMinimo: yup
-    .string()
-    .transform((value: string) => {
-        if (!value) return '0'
-        return (Number(value.replace(/\D/g, '')) / 100).toString()
-    })
-    .test({
-        name: 'pedido-minimo',
-        message: 'O pedido mínimo deve ser maior ou igual a R$ 0,0',
-        test: (value) => {
-            if (!value) return false
-            return Number(value) >= 0
-        }
-    }),
-    taxaEntrega: yup
-    .string()
-    .transform((value: string) => {
-        if (!value) return '0'
-        return (Number(value.replace(/\D/g, '')) / 100).toString()
-    })
-    .test({
-        name: 'taxa-entrega',
-        message: 'O valor da taxa de entrega deve ser maior ou igual a R$ 0,0',
-        test: (value) => {
-            if (!value) return false
-            return Number(value) >= 0
-        }
-    })
 
-})
-type FormularioLoja = {
+ export type FormularioLoja = {
     nome: string
     categoria: string
     tempo: string
@@ -73,9 +30,7 @@ type FormularioLoja = {
     taxaEntrega: string
 }
 export default function LojaIndex() {
-    const { register, handleSubmit, formState:{errors}, setValue, watch, reset} = useForm<FormularioLoja>({
-        resolver: yupResolver(validacaoLoja),
-    })
+    
 
 
     const { isLoading, isError, data, isFetching} = useQuery({
@@ -84,6 +39,61 @@ export default function LojaIndex() {
     })
     const queryClient = useQueryClient()
     const {isOpen, onOpen, onClose} =useDisclosure()
+    const {
+        isOpen: isOpenDelete,
+        onOpen: onOpenDelete,
+        onClose: onCloseDelete,
+    } = useDisclosure()
+
+    const [loja, setLoja] = useState<Loja | null>()
+    
+    const handleDelete = (loja: Loja) => {
+        setLoja(loja)
+        onOpenDelete()
+    }
+
+    const handleEdit = (loja: Loja) => {
+        setLoja(loja)
+        onOpen()
+    }
+    const updateLoja = async ({
+        logo,
+        cover,
+        pedidoMinimo,
+        taxaEntrega,
+        ...resto
+    }: FormularioLoja) => {
+        const imageLogo = logo[0] ? await getBase64(logo[0]) : loja?.imageLogo
+        const imageCover = cover[0]? await getBase64(cover[0]) : loja?.imageCover
+
+        const lojaData: Partial<Loja> = {
+            ...resto,
+            imageLogo,
+            imageCover,
+            pedidoMinimo: Number(pedidoMinimo.replace(/\D/g, '')) /100,
+            taxaEntrega: Number(taxaEntrega.replace(/\D/g, '')) /100,
+        }
+        try{
+            const {data} =  await atualizaLoja(loja?.id || '', lojaData)
+            notify(data.message, 'success')
+            onClose()
+            queryClient.invalidateQueries(['lojas', 'adm'])
+        } catch (e: any) {
+            notify(
+                e?.response?.data?.message || 'Ocorreu um erro ao atualizar',
+                'error'
+            )
+        }
+
+    }        
+    
+
+    const deleteLoja = async () => {
+        const { data } = await apagarLoja (loja?.id || 0)
+        await queryClient.invalidateQueries({queryKey: ['lojas', 'adm']})
+        notify(data.message, 'success')
+        onCloseDelete()
+    }
     
 
     const salvarLoja =  async({logo, cover, pedidoMinimo, taxaEntrega,...resto}: FormularioLoja) => {
@@ -106,7 +116,7 @@ export default function LojaIndex() {
         const response = await cadastrarLoja(submitData)
         notify(response.data.message, 'success')
         onClose()
-        reset()
+       
         queryClient.invalidateQueries({ queryKey: ['lojas', 'adm']})
        } catch (e: any) {
         if(e.response) {
@@ -152,11 +162,13 @@ export default function LojaIndex() {
                                 aria-label="Editar"
                                 icon={<FaPencilAlt/>}
                                 colorScheme="yellow"
+                                onClick={() =>handleEdit(loja)}
                                 />
                                 <IconButton
                                 aria-label="Apagar"
                                 icon={<FaTrash/>}
                                 colorScheme="red"
+                                onClick={() => handleDelete(loja)}
                                 />
                                 </Flex>
                             </Td>
@@ -166,78 +178,19 @@ export default function LojaIndex() {
             </Table>
             }
             </Flex>
-            <Modal isOpen={isOpen} onClose={onClose}>
-                <ModalOverlay/>
-                <ModalContent>
-                    <ModalHeader>Nova Loja</ModalHeader>
-                    <ModalCloseButton/>
-                    <ModalBody>
-                        <Flex as="form" p={4} direction="column"gap={1} onSubmit={handleSubmit(salvarLoja)}>
-                            <Input label="Nome" type="text" id="nome" error={errors.nome} {...register('nome')} />
-                            <Input label="Categoria" type="text" id="categoria" error={errors.categoria} {...register('categoria')}/>
-                            <Input label="Tempo de preparo" type="text" id="tempo" error={errors.tempo} {...register('tempo')}/>
-                            
-                           
-                            <Input label="Pedido mínimo" type="text" id="pedidoMinimo" error={errors.pedidoMinimo} {...register('pedidoMinimo')}
-                             onChange={({target}) =>{
-                                setValue('pedidoMinimo', formataMoeda(Number(target.value.replace(/\D/g, '')) /100),
-                                );
-                            }}/>
-                            <Input label="Taxa de entrega" type="text" id="taxaEntrega" error={errors.taxaEntrega} {...register('taxaEntrega')}
-                             onChange={({target}) =>{
-                                setValue('taxaEntrega', formataMoeda(Number(target.value.replace(/\D/g, '')) /100),
-                                );
-                            }}/>
-                             <Input label="Logo" type="file" id="logo"  display={'none'}  {...register('logo')}/>
-                            
-                            <FormControl isInvalid={!!errors.logo}>
-                            <FormLabel htmlFor="logo">
-                                <Image 
-                                alt="Imagem do logo"
-                                src={
-                                    typeof watch('logo') !=='undefined'
-                                    && typeof watch('logo')[0] === 'object' 
-                                ? URL.createObjectURL(watch('logo')[0])
-                                : 'https://placehold.it/100x100'                                
-                            }
-                            w="100px"
-                            h="100px"
-                            objectFit="cover"
-                            cursor={'pointer'}
-                            />
-                            </FormLabel>
-                            {!!errors.logo && (
-                            <FormErrorMessage>{errors.logo?.message as string}</FormErrorMessage>
-                            )}
-                            </FormControl>
-                            <Input label="Capa" type="file" id="cover"  display={'none'}  {...register('cover')}/>
-
-                            <FormControl isInvalid={!!errors.cover}>
-                            <FormLabel htmlFor="cover">
-                                <Image 
-                                alt="Imagem da capa"
-                                src={
-                                    typeof watch('cover') !=='undefined'
-                                     && typeof watch('cover')[0] === 'object' 
-                                ? URL.createObjectURL(watch('cover')[0])
-                                : 'https://placehold.co/1200x250'                                
-                            }
-                            w="100%"
-                            h="250px"
-                            objectFit="cover"
-                            cursor={'pointer'}
-                            />
-                            </FormLabel>
-                            {!!errors.cover && (
-                            <FormErrorMessage>{errors.cover?.message as string}</FormErrorMessage>
-                            )}
-                            </FormControl>
-                            
-                            <Button type="submit" colorScheme="green" >Salvar</Button>
-                        </Flex>
-                    </ModalBody>
-                </ModalContent>
-            </Modal>
+            
+            <ConfirmDelete 
+            isOpen={isOpenDelete}
+            onClose={onCloseDelete} 
+            onConfirm={deleteLoja}
+            messagem={`Tem certeza que deseja apagar esta loja ${loja?.nome}?`}
+            />
+            <FormLojas
+            isOpen={isOpen}
+            onClose={onClose}
+            salvarLoja={loja ? updateLoja : salvarLoja}
+            loja={loja as Loja}
+            />
         </Flex>
     )
 }
