@@ -10,10 +10,11 @@ type LoginData ={
 }
 
 interface TokenClaims {
-    iss: number | string
+    iss?: number | string
+    sub: number | string    
     nome: string
     email: string
-    permissions: string[]
+    permissoes: string[]
     exp: number
 }
 
@@ -77,10 +78,10 @@ export const AuthProvider: FC<{ children: ReactNode }> = ({ children }) => {
             const tokenClaims = decode<TokenClaims>(data.token);
 
             setUserData({
-                id: tokenClaims.iss as string,
+                id: tokenClaims.sub as string,
                 nome: tokenClaims.nome,
                 email: tokenClaims.email,
-                permissions: tokenClaims.permissions,                
+                permissions: tokenClaims.permissoes,                
             })
 
            setIsLogged(true);

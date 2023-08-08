@@ -16,7 +16,7 @@ export const CardProdutoHorizontal: FC<CardProdutosProps> = ({
         _hover={{transform: 'scale(1.01)'}}
         transition="all 0.2s"
         >
-            <Image src={imagem} alt={'Produto: ' + nome} objectFit="cover" />
+            <Image height="380px" width="220px"  src={imagem} alt={'Produto: ' + nome} objectFit="cover" />
             <Stack>
                 <CardBody>
                     <Heading size="md">{nome}</Heading>

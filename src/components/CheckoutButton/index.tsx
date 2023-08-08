@@ -1,6 +1,7 @@
 
 import { useCart } from "@/contexts/CartContext";
 import { formataMoeda } from "@/helpers/formataMoeda";
+import { cadastraPedido, checkout } from "@/services/pagamentoService";
 import { Link } from "@chakra-ui/next-js";
 import { Button, Flex,
      Popover, PopoverArrow, PopoverBody, PopoverContent, 
@@ -12,6 +13,19 @@ import { FaCreditCard, FaShoppingBasket, FaTrashAlt } from "react-icons/fa";
 
 export const CheckoutButton: FC = () => {
     const { quantidade, valor, produtos, removeFromCart} = useCart()
+
+    const handlePayment = async() => {
+        const pedidoData = { produtos }
+        const response= await cadastraPedido(pedidoData)
+
+        if (response) {
+            const {
+            data: { payment_url },
+         } = await checkout(response.data.id)
+            window.open(payment_url, '_blank')
+        }
+    }
+
     
     return(
     <Popover>
@@ -77,8 +91,7 @@ export const CheckoutButton: FC = () => {
                     <Button width="100%" 
                     colorScheme="green" 
                     leftIcon={<FaCreditCard/>}
-                    as={Link}
-                    href="/pagamento"
+                   onClick={handlePayment}
                     >
                     Ir para Pagamento
                     </Button>

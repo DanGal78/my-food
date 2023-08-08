@@ -64,12 +64,19 @@ export default  function LojaPage({params: {id}}: LojaProps ) {
             src={dadosLoja.imageCover} 
             alt={'Imagem da capa da empresa:'+ dadosLoja.nome} 
             borderRadius="10px"
+            objectFit="cover"
+            width="1200px"
+            height="250px"
             />
     
         
-        <Flex align="center" gap={4} mt={2}>
-        <Image src={dadosLoja.imageLogo} alt={'Imagem logo empresa:'+ dadosLoja.nome} 
-            borderRadius="full"/>
+        <Flex align="center" gap={4} mt={2}>y
+        <Image width="100px" 
+            height="100px"
+            src={dadosLoja.imageLogo} 
+            alt={'Imagem logo empresa:'+ dadosLoja.nome} 
+            borderRadius="full"
+            />
             <Heading fontSize="1.5rem">{dadosLoja.nome} </Heading>
             <StarRating nota={dadosLoja.nota}/>
             <Flex ml="auto" gap={5} >

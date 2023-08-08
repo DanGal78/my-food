@@ -42,7 +42,7 @@ export const CardLoja: FC<CardLojaProps> = ({
             <Image src={imageLogo}
             height="100px" 
             width="100px"
-            objectFit="cover"
+            objectFit="cover"           
              alt={`Logotipo da loja ${nome}`}  
              borderRadius="full"       
              />

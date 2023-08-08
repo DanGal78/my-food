@@ -1,5 +1,5 @@
 import { apiClient } from '@/config/axios';
-import { getProdutos } from './../Database/Queries/produtos';
+
 import { Loja } from "./lojaService";
 import axios from 'axios';
 

@@ -24,7 +24,7 @@ export const CardProdutos: FC<CardProdutosProps> = ({
         transition="all 0.2s"
         >
                 <CardBody padding={0}>
-                    <Image src={imagem} alt={'Imagem do Produto: ' + nome}/>
+                    <Image height="220px" width="380px" objectFit="cover" src={imagem} alt={'Imagem do Produto: ' + nome}/>
                     <Stack mt={5} mx={5}>
                     <Heading size="md">{nome}</Heading>
                     <Text noOfLines={3}>{descricao}</Text>

@@ -68,7 +68,7 @@ interface CreateUserResponse {
 }
 
 export const createUser = (userForm : CreateUserForm) => {
-    return apiClient.post<CreateUserResponse>('/register', userForm,)
+    return apiClient.post<CreateUserResponse>('/auth/regista', userForm,)
 }
 
 interface LoginResponse {
@@ -77,5 +77,5 @@ interface LoginResponse {
 }
 
 export const createLogin = <T> (userLogin: T ) =>{
-    return apiClient.post<LoginResponse>('/login', userLogin)
+    return apiClient.post<LoginResponse>('/auth/login', userLogin)
 }
